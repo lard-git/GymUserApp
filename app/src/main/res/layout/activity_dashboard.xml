@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vivian_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Header -->
+        <TextView
+            android:id="@+id/welcomeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Welcome, Member!"
+            android:textColor="@color/vivian_text_primary"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="32dp"
+            android:letterSpacing="0.05" />
+
+        <!-- QR Code Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="24dp"
+            android:elevation="8dp"
+            android:layout_marginBottom="32dp"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GYM PASS"
+                android:textColor="@color/vivian_secondary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"
+                android:letterSpacing="0.1" />
+
+            <ImageView
+                android:id="@+id/qrCode"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
+                android:background="@drawable/qr_background"
+                android:padding="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan at entrance"
+                android:textColor="@color/vivian_text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="16dp" />
+
+        </LinearLayout>
+
+        <!-- Stats Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="20dp"
+            android:elevation="6dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MEMBERSHIP STATUS"
+                android:textColor="@color/vivian_accent"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16px"
+                android:letterSpacing="0.05" />
+
+            <TextView
+                android:id="@+id/daysRemaining"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Days remaining: --"
+                android:textColor="@color/vivian_text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/vivian_surface"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/totalVisits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total visits: 0"
+                android:textColor="@color/vivian_text_secondary"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/totalTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Total time: 0 mins"
+                android:textColor="@color/vivian_text_secondary"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- Logout Button -->
+        <Button
+            android:id="@+id/logoutBtn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="LOGOUT"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/logout_button_background"
+            android:letterSpacing="0.05"
+            android:elevation="4dp" />
+
+    </LinearLayout>
+</ScrollView>

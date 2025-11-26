@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Vivian's Color Palette - Zenless Zone Zero Inspired -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Vivian's Theme Colors -->
+    <color name="vivian_primary">#FF6B48D9</color>
+    <color name="vivian_primary_dark">#FF4A2FB3</color>
+    <color name="vivian_primary_light">#FF8E6BFF</color>
+    <color name="vivian_secondary">#FFFF6B9C</color>
+    <color name="vivian_accent">#FF00D4FF</color>
+    <color name="vivian_background">#FF1A1B23</color>
+    <color name="vivian_surface">#FF252632</color>
+    <color name="vivian_card">#FF2D2E3C</color>
+    <color name="vivian_text_primary">#FFFFFFFF</color>
+    <color name="vivian_text_secondary">#FFB0B0C0</color>
+</resources>
