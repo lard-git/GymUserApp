@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.example.gymcustomer.databinding.ActivityLoginBinding
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -18,16 +19,15 @@ class LoginActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
 
-        // Enable Firebase offline persistence (do this once per app)
+        // Enable Firebase offline persistence
         try {
             Firebase.database.setPersistenceEnabled(true)
         } catch (e: Exception) {
             // Ignore if already enabled
         }
 
-        // Check if already logged in - this works offline due to SharedPreferences
+        // Check if already logged in - if yes, redirect to dashboard
         if (sessionManager.isLoggedIn()) {
-            // User is logged in, go directly to dashboard
             goToDashboard()
             return
         }
@@ -46,35 +46,34 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginMember() {
         val uid = binding.uidInput.text.toString().trim()
-        val fullName = binding.fullNameInput.text.toString().trim()
+        val fullNameInput = binding.fullNameInput.text.toString().trim()
 
-        if (uid.isEmpty() || fullName.isEmpty()) {
+        if (uid.isEmpty() || fullNameInput.isEmpty()) {
             Toast.makeText(this, "Please enter UID and full name", Toast.LENGTH_SHORT).show()
             return
         }
 
         val membersRef = Firebase.database.reference.child("Customers")
 
-        // Enable persistence for this specific reference
+        // Enable persistence for this reference
         membersRef.keepSynced(true)
 
         membersRef.child(uid).get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val snapshot = task.result
-                if (snapshot.exists()) {
-                    try {
-                        val member = try {
-                            snapshot.getValue(Member::class.java)
-                        } catch (e: Exception) {
-                            createMemberFromSnapshot(snapshot)
-                        }
-
+            try {
+                if (task.isSuccessful) {
+                    val snapshot = task.result
+                    if (snapshot.exists()) {
+                        val member = snapshot.getValue(Member::class.java)
                         if (member != null) {
-                            val memberFullName = "${member.safePersonalInfo().safeFirstName()} ${member.safePersonalInfo().safeLastName()}".trim()
+                            val dbFirstName = member.safePersonalInfo().safeFirstName()
+                            val dbLastName = member.safePersonalInfo().safeLastName()
 
-                            if (memberFullName.equals(fullName, ignoreCase = true)) {
+                            // Check both possible name formats
+                            val isValidName = checkNameMatch(fullNameInput, dbFirstName, dbLastName)
+
+                            if (isValidName) {
                                 // Save login session
-                                sessionManager.saveLoginSession(uid, fullName)
+                                sessionManager.saveLoginSession(uid, "$dbFirstName $dbLastName")
 
                                 // Go to dashboard
                                 val intent = Intent(this, DashboardActivity::class.java)
@@ -82,76 +81,58 @@ class LoginActivity : AppCompatActivity() {
                                 startActivity(intent)
                                 finish()
                             } else {
-                                Toast.makeText(this, "Invalid name", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Name doesn't match our records", Toast.LENGTH_SHORT).show()
                             }
                         } else {
                             Toast.makeText(this, "Failed to read member data", Toast.LENGTH_SHORT).show()
                         }
-                    } catch (e: Exception) {
-                        Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Member not found", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "Member not found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Network error. Please check your connection.", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                // This might be an offline error - try to use cached data
-                Toast.makeText(this, "Network error - using cached data if available", Toast.LENGTH_SHORT).show()
-                tryOfflineLogin(uid, fullName)
+            } catch (e: Exception) {
+                Toast.makeText(this, "Login error: ${e.message}", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
             }
+        }.addOnFailureListener { exception ->
+            Toast.makeText(this, "Connection failed: ${exception.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun tryOfflineLogin(uid: String, fullName: String) {
-        // Try to get cached data from Firebase
-        val membersRef = Firebase.database.reference.child("Customers")
-        membersRef.child(uid).get().addOnCompleteListener { task ->
-            if (task.isSuccessful && task.result.exists()) {
-                try {
-                    val member = try {
-                        task.result.getValue(Member::class.java)
-                    } catch (e: Exception) {
-                        createMemberFromSnapshot(task.result)
-                    }
-
-                    if (member != null) {
-                        val memberFullName = "${member.safePersonalInfo().safeFirstName()} ${member.safePersonalInfo().safeLastName()}".trim()
-
-                        if (memberFullName.equals(fullName, ignoreCase = true)) {
-                            // Save login session
-                            sessionManager.saveLoginSession(uid, fullName)
-
-                            val intent = Intent(this, DashboardActivity::class.java)
-                            intent.putExtra("member_data", member)
-                            startActivity(intent)
-                            finish()
-                        } else {
-                            Toast.makeText(this, "Invalid name (offline)", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                } catch (e: Exception) {
-                    Toast.makeText(this, "Offline data error", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this, "No cached data available", Toast.LENGTH_SHORT).show()
-            }
+    /**
+     * Checks if the input name matches the database name in either order
+     * Supports: "Yuzuha Ukonami" OR "Ukonami Yuzuha"
+     */
+    private fun checkNameMatch(inputName: String, dbFirstName: String, dbLastName: String): Boolean {
+        if (inputName.isBlank() || dbFirstName.isBlank() || dbLastName.isBlank()) {
+            return false
         }
+
+        // Normalize the names (trim and lowercase)
+        val normalizedInput = inputName.toLowerCase(Locale.getDefault()).trim()
+        val normalizedDbFirst = dbFirstName.toLowerCase(Locale.getDefault()).trim()
+        val normalizedDbLast = dbLastName.toLowerCase(Locale.getDefault()).trim()
+
+        // Create both possible combinations from database
+        val dbNameNormalOrder = "$normalizedDbFirst $normalizedDbLast"
+        val dbNameReverseOrder = "$normalizedDbLast $normalizedDbFirst"
+
+        // Check if input matches either combination
+        return normalizedInput == dbNameNormalOrder || normalizedInput == dbNameReverseOrder
     }
 
     private fun goToDashboard() {
         val uid = sessionManager.getUid()
         if (uid != null) {
             val membersRef = Firebase.database.reference.child("Customers")
-            membersRef.keepSynced(true) // Keep this data synced for offline
+            membersRef.keepSynced(true)
 
             membersRef.child(uid).get().addOnCompleteListener { task ->
                 if (task.isSuccessful && task.result.exists()) {
                     try {
-                        val member = try {
-                            task.result.getValue(Member::class.java)
-                        } catch (e: Exception) {
-                            createMemberFromSnapshot(task.result)
-                        }
-
+                        val member = task.result.getValue(Member::class.java)
                         if (member != null) {
                             val intent = Intent(this, DashboardActivity::class.java)
                             intent.putExtra("member_data", member)
@@ -180,21 +161,13 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun createMemberFromSnapshot(snapshot: com.google.firebase.database.DataSnapshot): Member {
-        return Member(
-            personal_info = convertToMap(snapshot.child("personal_info")),
-            membership = convertToMap(snapshot.child("membership")),
-            gym_data = convertToMap(snapshot.child("gym_data")),
-            attendance_history = convertToMap(snapshot.child("attendance_history"))
-        )
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun convertToMap(snapshot: com.google.firebase.database.DataSnapshot): Map<String, Any>? {
-        return when (val value = snapshot.value) {
-            is Map<*, *> -> value as? Map<String, Any>
-            else -> null
+    override fun onDestroy() {
+        super.onDestroy()
+        // Clean up any network resources
+        try {
+            System.gc()
+        } catch (e: Exception) {
+            // Ignore cleanup errors
         }
     }
 }

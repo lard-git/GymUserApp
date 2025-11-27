@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TRAIN TRACK"
+        android:text="TRIAN TRACK"
         android:textColor="@color/vivian_primary_light"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -72,7 +72,7 @@
             android:id="@+id/fullNameInput"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:hint="Enter your full name"
+            android:hint="Full Name"
             android:textColor="@color/vivian_text_primary"
             android:textColorHint="@color/vivian_text_secondary"
             android:background="@drawable/edittext_background"

@@ -31,7 +31,6 @@ class DashboardActivity : AppCompatActivity() {
 
         // Get member data from intent
         currentMember = intent.getSerializableExtra("member_data") as? Member ?: run {
-            // If no member data, go back to login
             Toast.makeText(this, "Session expired", Toast.LENGTH_SHORT).show()
             performLogout()
             return
@@ -117,5 +116,15 @@ class DashboardActivity : AppCompatActivity() {
                 moveTaskToBack(true)
             }
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Clean up resources
+        try {
+            System.gc()
+        } catch (e: Exception) {
+            // Ignore cleanup errors
+        }
     }
 }

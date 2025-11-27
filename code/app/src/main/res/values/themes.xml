@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <!-- Base application theme with Vivian's ZZZ color palette -->
-    <style name="Theme.GymCustomer" parent="android:Theme.Material.Light.NoActionBar">
-        <!-- Customize your theme here -->
-        <item name="android:colorPrimary">@color/vivian_primary</item>
-        <item name="android:colorPrimaryDark">@color/vivian_primary_dark</item>
-        <item name="android:colorAccent">@color/vivian_secondary</item>
-        <item name="android:windowBackground">@color/vivian_background</item>
-        <item name="android:colorBackground">@color/vivian_background</item>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.GymCustomer" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/vivian_primary</item>
+        <item name="colorPrimaryDark">@color/vivian_primary_dark</item>
+        <item name="colorSecondary">@color/vivian_secondary</item>
+        <item name="colorSurface">@color/vivian_surface</item>
         <item name="android:statusBarColor">@color/vivian_background</item>
         <item name="android:navigationBarColor">@color/vivian_background</item>
-        <item name="android:textColorPrimary">@color/vivian_text_primary</item>
-        <item name="android:textColorSecondary">@color/vivian_text_secondary</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
     </style>
 
+    <style name="Theme.GymCustomer" parent="Base.Theme.GymCustomer" />
 </resources>
