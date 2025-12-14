@@ -1,6 +1,7 @@
 package com.example.gymcustomer
 
 import android.content.Intent
+import android.view.WindowManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
@@ -24,6 +25,9 @@ class DashboardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

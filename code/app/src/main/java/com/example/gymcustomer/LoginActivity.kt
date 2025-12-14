@@ -3,6 +3,7 @@ package com.example.gymcustomer
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.Toast
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -16,6 +17,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
 
         sessionManager = SessionManager(this)
 
@@ -101,10 +104,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Checks if the input name matches the database name in either order
-     * Supports: "Yuzuha Ukonami" OR "Ukonami Yuzuha"
-     */
+
     private fun checkNameMatch(inputName: String, dbFirstName: String, dbLastName: String): Boolean {
         if (inputName.isBlank() || dbFirstName.isBlank() || dbLastName.isBlank()) {
             return false
